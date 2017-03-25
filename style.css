@@ -1,0 +1,18 @@
+body {
+  margin: 20px;
+}
+
+.circleCSS{
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  color: red;
+  position:absolute;
+}
+
+.containerCSS{
+  width:600px;
+  height:300px;
+  background:black;
+  position:relative;
+}

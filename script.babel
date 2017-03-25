@@ -1,0 +1,124 @@
+
+class Game extends React.Component {
+  constructor(){
+    super();
+    this.keyHandler = this.keyHandler.bind(this);
+    this.addBall = this.addBall.bind(this);
+    this.animate = this.animate.bind(this);
+    this.state={
+      isPaused: false,
+      containerHeight: 300,
+      containerWidth: 600,
+      circleRadius: 20,
+      balls: []
+    }
+    window.addEventListener("keydown", this.keyHandler, false);
+  }
+  
+  keyHandler(event){
+    console.log(event.keyCode);
+    if(event.keyCode == 32){
+      this.setState({isPaused: !this.state.isPaused});
+    }
+    if(event.keyCode == 13 && this.state.balls.length <= 10){
+      var ball = this.addBall();
+      var balls = this.state.balls;
+      this.setState({balls: balls.concat(ball)});
+    }
+    if(event.keyCode == 27 && this.state.balls.length >= 0){
+      var balls = this.state.balls;
+      balls.pop();
+      this.setState({balls: balls});
+    }
+  }
+ 
+  
+  addBall(){
+    var containerHeight = this.state.containerHeight;
+    var containerWidth = this.state.containerWidth;
+    var circleRadius = this.state.circleRadius;
+    var top = Math.floor(Math.random() * (containerHeight - circleRadius));
+    var left = Math.floor(Math.random() * (containerWidth - circleRadius));
+    var color = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+    var xSpeed, ySpeed;
+    var randomDir = Math.floor(Math.random() * 4) + 1;
+    switch(randomDir){
+      case 1: xSpeed = 1, ySpeed = 1;
+        break;
+      case 2: xSpeed = 1, ySpeed = -1;
+        break;
+      case 3: xSpeed = -1, ySpeed = 1;
+        break;
+      case 4: xSpeed = -1, ySpeed = -1;
+        break;
+     }
+    var ball={
+      top: top,
+      left: left,
+      color: color,
+      xSpeed: xSpeed,
+      ySpeed: ySpeed
+    };
+    return ball;
+  }
+  
+  animate(){
+    if(!this.state.isPaused){
+      
+      var heightLimit = this.state.containerHeight - this.state.circleRadius;
+      var widthLimit = this.state.containerWidth - this.state.circleRadius;
+      var balls = this.state.balls;
+    
+      for(var i=0; i < balls.length; i++){
+      if(balls[i].top <=0 || balls[i].top >= heightLimit){
+        balls[i].ySpeed = -balls[i].ySpeed;
+      }
+      if(balls[i].left <=0 || balls[i].left >= widthLimit){
+        balls[i].xSpeed = -balls[i].xSpeed;
+      }
+      balls[i].top += balls[i].ySpeed;
+      balls[i].left += balls[i].xSpeed;
+    }
+    this.setState({balls: balls});  
+   }
+  }
+  
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.animate(),
+      5
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+  
+  render() {
+    var balls = this.state.balls;
+    var allballs = balls.map((item,index)=>{
+      var divStyle={
+        top: item.top,
+        left: item.left,
+        background: item.color
+      };
+      return(
+        <div key={index} style={divStyle} className="circleCSS"></div>      
+      );
+    });
+    return (
+      <div className="containerCSS">
+      {allballs}
+      </div>
+    );
+  }
+}
+
+// ========================================
+
+ReactDOM.render(
+  <Game />,
+  document.getElementById('container')
+);
+
+
