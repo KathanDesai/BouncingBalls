@@ -2,7 +2,7 @@
 
 This project is developed using react.js. 
 
-The user has to press enter on intial load to add a ball.
+The user has to press enter on initial load to add a ball.
 
 Press escape to remove a ball and space to toggle animation state.
 
